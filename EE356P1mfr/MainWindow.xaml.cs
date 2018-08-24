@@ -23,6 +23,13 @@ namespace EE356P1mfr
         public MainWindow()
         {
             InitializeComponent();
+
+            /*-- This function is the entry point for my logic and own subroutines
+             *-- just so that it's easier to organize and read my own code.  -rienzo --*/
+            int ReturnStatusCode = new CustomEntry();
+
+            // Really just adding this comment to test how the GitHub plugin for VisualStudio
+            // handles dates/commit authors/etc.
         }
     }
 }
