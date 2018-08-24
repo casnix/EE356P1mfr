@@ -26,10 +26,25 @@ namespace EE356P1mfr
 
             /*-- This function is the entry point for my logic and own subroutines
              *-- just so that it's easier to organize and read my own code.  -rienzo --*/
-            int ReturnStatusCode = new CustomEntry();
+            CustomEntry ProgramMain = new CustomEntry();
+
+            ProgramMain.start();
 
             // Really just adding this comment to test how the GitHub plugin for VisualStudio
-            // handles dates/commit authors/etc.
+            // handles dates/commit authors/etc.  !!! This was labeled as the `Sysfunc probe'
+            // during commit/push on 8/23/2018.  -rienzo
+
+            /*-- End ourselves --*/
+            Application.Current.Shutdown(ReturnStatusCode);
+
+            /*-- Kill ourselves if we messed up and left little children (threads) running around,
+             *-- which we shouldn't have, but if a library doesn't do what I think it does
+             *-- it's a possibility.  I also don't know if this will get called after 
+             *-- Application.Current.Shutdown(int) fails... --*/
+            Environment.Exit(ReturnStatusCode); // TODO: Add CheckOut() function to CustomEntry{}
+                                                //       that runs in separate thread and waits
+                                                //       for a signal that Application.Current.Shutdown(ProgramMain.sendShutDown())
+                                                //       has failed.
         }
     }
 }
