@@ -13,6 +13,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+// 13 tall
+// 13 wide
 namespace EE356P1mfr
 {
     /// <summary>
@@ -36,15 +38,6 @@ namespace EE356P1mfr
 
             /*-- End ourselves --*/
             Application.Current.Shutdown(ReturnStatusCode);
-
-            /*-- Kill ourselves if we messed up and left little children (threads) running around,
-             *-- which we shouldn't have, but if a library doesn't do what I think it does
-             *-- it's a possibility.  I also don't know if this will get called after 
-             *-- Application.Current.Shutdown(int) fails... --*/
-            Environment.Exit(ReturnStatusCode); // TODO: Add CheckOut() function to CustomEntry{}
-                                                //       that runs in separate thread and waits
-                                                //       for a signal that Application.Current.Shutdown(ProgramMain.sendShutDown())
-                                                //       has failed.
         }
     }
 }
