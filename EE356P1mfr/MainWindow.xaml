@@ -8,7 +8,13 @@
         WindowStartupLocation="CenterScreen"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        
+        <Rectangle x:Name="rectImage" Fill="#FFF4F4F5" HorizontalAlignment="Left" Height="356" Margin="31,34,0,0" Stroke="Black" VerticalAlignment="Top" Width="210"/>
+        <Label x:Name="lblYourPic" Content="Your Image Here" HorizontalAlignment="Left" Margin="60,196,0,0" VerticalAlignment="Top" FontSize="20px"/>
+        <Rectangle x:Name="rectAscii" Fill="#FFF4F4F5" HorizontalAlignment="Left" Height="356" Margin="309,34,0,0" Stroke="Black" VerticalAlignment="Top" Width="213"/>
+        <Label x:Name="lblAscii" Content="ASCII Art Here" HorizontalAlignment="Left" Margin="354,196,0,0" VerticalAlignment="Top" FontSize="20px"/>
+        <Label x:Name="lblEquImgAscii" Content="=" HorizontalAlignment="Left" Margin="265,196,0,0" VerticalAlignment="Top" FontSize="20px"/>
+        <ToolBar x:Name="tlbarMain" HorizontalAlignment="Left" Height="29" VerticalAlignment="Top" Width="792" Opacity="0.75"/>
+
 
     </Grid>
 </Window>
