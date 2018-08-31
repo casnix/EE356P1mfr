@@ -36,6 +36,7 @@ namespace EE356P1mfr
         public Dictionary<int, System.Windows.Media.FontFamily> FontIndexer { get; set; }
         private Dictionary<int, System.Drawing.FontFamily> FormsFontIndexer { get; set; }
 //        private List<System.Windows.Media.FontFamily> FixedWidthFontsEnumerated { get; set; }
+        private Dictionary<float, char> ASCIIChars { get; set; }
         private string AvailableASCIIString;
         private Dictionary<float, Bitmap> ASCIIShades { get; set; }
         private bool ColorOutput;
@@ -191,24 +192,51 @@ namespace EE356P1mfr
         
         private Dictionary<float, Bitmap> CalculateFontShades()
         {
+            lblFooterStatus.Content = "Status: Calculating font shaders...";
+
+            Dictionary<float, Bitmap> retDict = new Dictionary<float, Bitmap>();
             int fontIndex = cmboFonts.SelectedIndex;
-            
+            this.ASCIIShades = new Dictionary<float, Bitmap>();
             System.Drawing.Image bmp = new Bitmap(100, 100);
             for (int i = 0; i < AvailableASCIIString.Length; i++)
             {
+                // Find pixel size, and create bitmap of character
                 Graphics g = Graphics.FromImage(bmp);
 
                 Font myFont = new Font(FormsFontIndexer[fontIndex], 14, GraphicsUnit.Pixel);
                 SizeF size = g.MeasureString(""+AvailableASCIIString[i], myFont);
                 PointF rect = new PointF(size.Width, size.Height);
 
-                System.Windows.MessageBox.Show("X:" + (int)Math.Ceiling(rect.X) + "\nY:" + (int)Math.Ceiling(rect.Y));
-                System.Windows.Application.Current.Shutdown();
-                System.Drawing.Image outBmp = new Bitmap((int)Math.Ceiling(rect.X), (int)Math.Ceiling(rect.X));
-                g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
-                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                g.PixelOffsetMode = PixelOffsetMode.HighQuality;
-                g.DrawString("" + AvailableASCIIString[i], myFont, new SolidBrush(System.Drawing.Color.Black), rect);
+                Bitmap outBmp = new Bitmap((int)Math.Ceiling(rect.X), (int)Math.Ceiling(rect.X), System.Drawing.Imaging.PixelFormat.Format24bppRgb);
+                //todo set pixelformat
+                Graphics o = Graphics.FromImage(outBmp);
+                o.FillRectangle(System.Drawing.Brushes.White, 0, 0, rect.X, rect.Y);
+
+                o.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
+                o.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                o.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                o.DrawString("" + AvailableASCIIString[i], myFont, new SolidBrush(System.Drawing.Color.Black), rect);
+
+                // Determine shade
+                int white = 0;
+                int nonWhite = 0;
+                for(int x = 0; x < outBmp.Width; x++)
+                {
+                    for(int y = 0; y < outBmp.Height; y++)
+                    {
+                        System.Drawing.Color pxColor = outBmp.GetPixel(x, y);
+                        if(pxColor == System.Drawing.Color.White)
+                        {
+                            white++;
+                        }
+                        else
+                        {
+                            nonWhite++;
+                        }
+                    }
+                }
+
+                
             }
 
 
