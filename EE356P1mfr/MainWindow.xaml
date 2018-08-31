@@ -8,13 +8,31 @@
         WindowStartupLocation="CenterScreen"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        <Rectangle x:Name="rectImage" Fill="#FFF4F4F5" HorizontalAlignment="Left" Height="356" Margin="31,34,0,0" Stroke="Black" VerticalAlignment="Top" Width="210"/>
-        <Label x:Name="lblYourPic" Content="Your Image Here" HorizontalAlignment="Left" Margin="60,196,0,0" VerticalAlignment="Top" FontSize="20px"/>
-        <Rectangle x:Name="rectAscii" Fill="#FFF4F4F5" HorizontalAlignment="Left" Height="356" Margin="309,34,0,0" Stroke="Black" VerticalAlignment="Top" Width="213"/>
-        <Label x:Name="lblAscii" Content="ASCII Art Here" HorizontalAlignment="Left" Margin="354,196,0,0" VerticalAlignment="Top" FontSize="20px"/>
-        <Label x:Name="lblEquImgAscii" Content="=" HorizontalAlignment="Left" Margin="265,196,0,0" VerticalAlignment="Top" FontSize="20px"/>
-        <ToolBar x:Name="tlbarMain" HorizontalAlignment="Left" Height="29" VerticalAlignment="Top" Width="792" Opacity="0.75"/>
+        <Rectangle x:Name="rectInput" Fill="#FFF4F4F5" HorizontalAlignment="Left" Height="356" Margin="31,34,0,0" Stroke="Black" VerticalAlignment="Top" Width="394"/>
+        <Label x:Name="lblYourPic" Content="Input image" HorizontalAlignment="Left" Margin="172,195,0,0" VerticalAlignment="Top" FontSize="20px"/>
+        <DockPanel>
+            <Menu DockPanel.Dock="Top" OpacityMask="#FF7A6969" Background="{x:Null}">
+                <MenuItem Header="_File">
+                    <MenuItem Header="_Open image file" Click="mnuFileOpen_Click"/>
+                    <MenuItem Header="_Save ASCII art bitmap" Click="mnuFileSave_Click"/>
+                    <MenuItem Header="_Quit" Click="mnuFileClose_Click"/>
+                </MenuItem>
+                <MenuItem Header="_Options">
+                    <MenuItem Header="_Toggle color output (default is on)" Click="mnuOptionsToggle_Click"/>
+                    <MenuItem Header="Color ouput ON" Name="mnuItmColorOutputMode" IsEnabled="False" Background="#FFD6DA81"/>
+                </MenuItem>
+                <MenuItem Header="_Help">
+                    <MenuItem Header="Display help (_?)" Click="mnuHelpDisplay_Click"/>
+                    <MenuItem Header="_About" Click="mnuHelpAbout_Click"/>
+                    <!--                    <MenuItem Header="Easter egg" Click="Menu_Help_Easter_Egg" Opacity="0.14"/> -->
+                </MenuItem>
+                <MenuItem Header="Font:"/>
+                <ComboBox x:Name="cmboFonts" Width="120" SelectionChanged="cmboFonts_SelectionChanged"/>
+            </Menu>
 
-
+        </DockPanel>
+        <Rectangle Name="rectGeneration" HorizontalAlignment="Left" Height="356" Margin="31,34,0,0" Stroke="Black" VerticalAlignment="Top" Width="394" Visibility="Hidden"/>
+        <Button x:Name="btnImgLoad" Content="Load new image" HorizontalAlignment="Left" Margin="502,34,0,0" VerticalAlignment="Top" Width="250" Height="29" FontSize="18px" Click="btnImgLoad_Click"/>
+        <Button x:Name="btnGenerate" Content="Generate ASCII art" HorizontalAlignment="Left" Margin="502,118,0,0" VerticalAlignment="Top" Width="250" Height="29" FontSize="18px" Click="btnGenerate_Click"/>
     </Grid>
 </Window>

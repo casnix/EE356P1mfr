@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Microsoft.Win32;
 
 // 13 tall
 // 13 wide
@@ -22,22 +23,44 @@ namespace EE356P1mfr
     /// </summary>
     public partial class MainWindow : Window
     {
+        private CustomEntry ProgramMain;
+        private int ReturnStatusCode = 0xff;
         public MainWindow()
         {
             InitializeComponent();
-
-            /*-- This function is the entry point for my logic and own subroutines
-             *-- just so that it's easier to organize and read my own code.  -rienzo --*/
-            CustomEntry ProgramMain = new CustomEntry();
-
-            ProgramMain.start();
+            
 
             // Really just adding this comment to test how the GitHub plugin for VisualStudio
             // handles dates/commit authors/etc.  !!! This was labeled as the `Sysfunc probe'
             // during commit/push on 8/23/2018.  -rienzo
 
             /*-- End ourselves --*/
-            Application.Current.Shutdown(ReturnStatusCode);
+            Application.Current.Shutdown(this.ReturnStatusCode);
+        }
+
+
+        private void btnImgLoad_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void btnGenerate_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void mnuFileOpen_Click(object sender, RoutedEventArgs e)
+        { }
+
+        private void mnuFileSave_Click(object sender, RoutedEventArgs e)
+        { }
+
+        private void mnuFileClose_Click(object sender, RoutedEventArgs e)
+        { }
+
+        private void cmboFonts_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
         }
     }
 }
