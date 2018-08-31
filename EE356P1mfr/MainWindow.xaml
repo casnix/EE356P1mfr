@@ -6,7 +6,8 @@
         xmlns:local="clr-namespace:EE356P1mfr"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="450" Width="800"
+        DataContext="{Binding RelativeSource={RelativeSource Self}}">
     <Grid>
         <Rectangle x:Name="rectInput" Fill="#FFF4F4F5" HorizontalAlignment="Left" Height="356" Margin="31,34,0,0" Stroke="Black" VerticalAlignment="Top" Width="394"/>
         <Label x:Name="lblYourPic" Content="Input image" HorizontalAlignment="Left" Margin="172,195,0,0" VerticalAlignment="Top" FontSize="20px"/>
@@ -19,7 +20,7 @@
                 </MenuItem>
                 <MenuItem Header="_Options">
                     <MenuItem Header="_Toggle color output (default is on)" Click="mnuOptionsToggle_Click"/>
-                    <MenuItem Header="Color ouput ON" Name="mnuItmColorOutputMode" IsEnabled="False" Background="#FFD6DA81"/>
+                    <MenuItem Header="Color ouput is ON" Name="mnuItmColorOutputMode" IsEnabled="False" Background="#FFD6DA81"/>
                 </MenuItem>
                 <MenuItem Header="_Help">
                     <MenuItem Header="Display help (_?)" Click="mnuHelpDisplay_Click"/>
@@ -27,12 +28,19 @@
                     <!--                    <MenuItem Header="Easter egg" Click="Menu_Help_Easter_Egg" Opacity="0.14"/> -->
                 </MenuItem>
                 <MenuItem Header="Font:"/>
-                <ComboBox x:Name="cmboFonts" Width="120" SelectionChanged="cmboFonts_SelectionChanged"/>
+                <ComboBox x:Name="cmboFonts" Width="158" SelectionChanged="cmboFonts_SelectionChanged" ItemsSource="{Binding Path=FixedWidthFonts}" Height="20">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding}" FontFamily="{Binding}"/>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
             </Menu>
 
         </DockPanel>
         <Rectangle Name="rectGeneration" HorizontalAlignment="Left" Height="356" Margin="31,34,0,0" Stroke="Black" VerticalAlignment="Top" Width="394" Visibility="Hidden"/>
         <Button x:Name="btnImgLoad" Content="Load new image" HorizontalAlignment="Left" Margin="502,34,0,0" VerticalAlignment="Top" Width="250" Height="29" FontSize="18px" Click="btnImgLoad_Click"/>
         <Button x:Name="btnGenerate" Content="Generate ASCII art" HorizontalAlignment="Left" Margin="502,118,0,0" VerticalAlignment="Top" Width="250" Height="29" FontSize="18px" Click="btnGenerate_Click"/>
+        <Button x:Name="btnSave" Content="Save ASCII art" HorizontalAlignment="Left" Margin="502,207,0,0" VerticalAlignment="Top" Width="250" Height="29" FontSize="18px" Click="btnSave_Click"/>
     </Grid>
 </Window>
