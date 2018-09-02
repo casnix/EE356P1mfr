@@ -194,9 +194,10 @@ namespace EE356P1mfr
         {
             lblFooterStatus.Content = "Status: Calculating font shaders...";
 
+            int imgArea = 0;
             Dictionary<float, Bitmap> retDict = new Dictionary<float, Bitmap>();
             int fontIndex = cmboFonts.SelectedIndex;
-            this.ASCIIShades = new Dictionary<float, Bitmap>();
+            this.ASCIIChars = new Dictionary<float, char>();
             System.Drawing.Image bmp = new Bitmap(100, 100);
             for (int i = 0; i < AvailableASCIIString.Length; i++)
             {
@@ -210,13 +211,14 @@ namespace EE356P1mfr
                 Bitmap outBmp = new Bitmap((int)Math.Ceiling(rect.X), (int)Math.Ceiling(rect.X), System.Drawing.Imaging.PixelFormat.Format24bppRgb);
                 //todo set pixelformat
                 Graphics o = Graphics.FromImage(outBmp);
-                o.FillRectangle(System.Drawing.Brushes.White, 0, 0, rect.X, rect.Y);
+                //o.FillRectangle(System.Drawing.Brushes.White, 0, 0, rect.X, rect.Y);
 
                 o.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
                 o.InterpolationMode = InterpolationMode.HighQualityBicubic;
                 o.PixelOffsetMode = PixelOffsetMode.HighQuality;
-                o.DrawString("" + AvailableASCIIString[i], myFont, new SolidBrush(System.Drawing.Color.Black), rect);
+                o.DrawString("" + AvailableASCIIString[i], myFont, new SolidBrush(System.Drawing.Color.White), rect);
 
+                outBmp.Save("./outbmp.bmp");
                 // Determine shade
                 int white = 0;
                 int nonWhite = 0;
@@ -236,11 +238,17 @@ namespace EE356P1mfr
                     }
                 }
 
-                
+                // Calculate our shade float
+                imgArea = outBmp.Width * outBmp.Height;
+                float shade = (float)white / (float)imgArea;
+                ASCIIChars.Add(shade, AvailableASCIIString[i]);
+                retDict.Add(shade, outBmp);
+                o.Dispose();
+                outBmp.Dispose();
             }
 
 
-            return null;
+            return retDict;
         }
     }
 }
