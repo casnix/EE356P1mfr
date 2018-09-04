@@ -208,23 +208,25 @@ namespace EE356P1mfr
                 SizeF size = g.MeasureString(""+AvailableASCIIString[i], myFont);
                 PointF rect = new PointF(size.Width, size.Height);
 
-                Bitmap outBmp = new Bitmap((int)Math.Ceiling(rect.X), (int)Math.Ceiling(rect.X), System.Drawing.Imaging.PixelFormat.Format24bppRgb);
+                System.Windows.MessageBox.Show("X:"+ (int)Math.Ceiling(rect.X)+"\nY:"+(int)Math.Ceiling(rect.Y)+"\nfX"+rect.X+"\nfY:"+rect.Y);
+                Bitmap outBmp = new Bitmap((int)Math.Ceiling(rect.X), (int)Math.Ceiling(rect.Y), System.Drawing.Imaging.PixelFormat.Format24bppRgb);
                 //todo set pixelformat
-                Graphics o = Graphics.FromImage(outBmp);
-                //o.FillRectangle(System.Drawing.Brushes.White, 0, 0, rect.X, rect.Y);
+                //Graphics o = Graphics.FromImage(outBmp);
+                g.FillRectangle(System.Drawing.Brushes.White, 0, 0, rect.X, rect.Y);
 
-                o.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
-                o.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                o.PixelOffsetMode = PixelOffsetMode.HighQuality;
-                o.DrawString("" + AvailableASCIIString[i], myFont, new SolidBrush(System.Drawing.Color.White), rect);
+                g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
+                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                g.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                g.DrawString("" + AvailableASCIIString[i], myFont, new SolidBrush(System.Drawing.Color.White), rect);
 
-                outBmp.Save("./outbmp.bmp");
+                //outBmp.Save("./outbmp.bmp");
+                bmp.Save("./bmp.bmp");
                 // Determine shade
                 int white = 0;
                 int nonWhite = 0;
-                for(int x = 0; x < outBmp.Width; x++)
+                for(int x = 0; x < bmp.Width; x++)
                 {
-                    for(int y = 0; y < outBmp.Height; y++)
+                    for(int y = 0; y < bmp.Height; y++)
                     {
                         System.Drawing.Color pxColor = outBmp.GetPixel(x, y);
                         if(pxColor == System.Drawing.Color.White)
@@ -243,7 +245,7 @@ namespace EE356P1mfr
                 float shade = (float)white / (float)imgArea;
                 ASCIIChars.Add(shade, AvailableASCIIString[i]);
                 retDict.Add(shade, outBmp);
-                o.Dispose();
+                g.Dispose();
                 outBmp.Dispose();
             }
 
