@@ -16,6 +16,7 @@ using Microsoft.Win32;
 using System.Drawing;
 using System.Drawing.Design;
 using System.Drawing.Imaging;
+using Microsoft.Win32;
 
 // This is a WPF project, but I have to include this to be able to
 //   enumerate the fixed-width fonts because .NET has no function for listing
@@ -38,9 +39,12 @@ namespace EE356P1mfr
         private Dictionary<int, System.Drawing.FontFamily> FormsFontIndexer { get; set; }
 //        private List<System.Windows.Media.FontFamily> FixedWidthFontsEnumerated { get; set; }
         private Dictionary<float, char> ASCIIChars { get; set; }
+        private List<float> AvailableShades { get; set; }
         private string AvailableASCIIString;
         private Dictionary<float, Bitmap> ASCIIShades { get; set; }
         private bool ColorOutput;
+        private float SelectedFontSize;
+        private float[] AvailableFontSizes = new float[] { 12, 14, 18, 24, 28, 36 };
         public MainWindow()
         {
             this.ComponentsInitialized = false;
@@ -57,14 +61,14 @@ namespace EE356P1mfr
             this.mnuOptionsToggle_Click(null, null);
 
             this.ASCIIShades = this.CalculateFontShades();
-            // Really just adding this comment to test how the GitHub plugin for VisualStudio
-            // handles dates/commit authors/etc.  !!! This was labeled as the `Sysfunc probe'
-            // during commit/push on 8/23/2018.  -rienzo
-
-
+            
             lblFooterStatus.Content = "Status: Ready.";
         }
 
+        private void OpenNewImage()
+        {
+
+        }
 
         private void btnImgLoad_Click(object sender, RoutedEventArgs e)
         {
@@ -77,6 +81,9 @@ namespace EE356P1mfr
         }
 
         private void btnSave_Click(object sender, RoutedEventArgs e)
+        { }
+
+        private void btnConvert_Click(object sender, RoutedEventArgs e)
         { }
 
         private void mnuFileOpen_Click(object sender, RoutedEventArgs e)
@@ -120,6 +127,11 @@ namespace EE356P1mfr
         private void mnuHelpAbout_Click(object sender, RoutedEventArgs e)
         {
             System.Windows.MessageBox.Show("EE356P1mfr -- Project 1 in C# (WPF, .NET) for EE-356 Fall 2018\nAuthor: Matt Rienzo\nCopyright: Matt Rienzo, 2018\nGithub: https://github.com/casnix/EE356P1mfr");
+        }
+
+        private void cmboFontSize_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            SelectedFontSize = AvailableFontSizes[cmboFontSize.SelectedIndex];
         }
 
         private void cmboFonts_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -215,27 +227,29 @@ namespace EE356P1mfr
                 // Find pixel size, and create bitmap of character
                 Graphics g = Graphics.FromImage(bmp);
 
-                Font myFont = new Font(FormsFontIndexer[fontIndex], 14, GraphicsUnit.Pixel);
+                Font myFont = new Font(FormsFontIndexer[fontIndex], SelectedFontSize, GraphicsUnit.Pixel);
                 SizeF size = g.MeasureString(AvailableASCIIString[i].ToString(), myFont);
                 PointF rect = new PointF(size.Width, size.Height);
 
-                //System.Windows.MessageBox.Show("X:"+ (int)Math.Ceiling(rect.X)+"\nY:"+(int)Math.Ceiling(rect.Y)+"\nfX"+rect.X+"\nfY:"+rect.Y);
-                Bitmap outBmp = new Bitmap((int)Math.Ceiling(rect.X), (int)Math.Ceiling(rect.Y), System.Drawing.Imaging.PixelFormat.Format24bppRgb);
+                //System.Windows.MessageBox.Show(""+(myFont.SizeInPoints / 72 * g.DpiX));
+                
+                //System.Windows.MessageBox.Show("X:"+ (int)rect.X+"\nY:"+(int)rect.Y+"\nfX"+rect.X+"\nfY:"+rect.Y);
+                Bitmap outBmp = new Bitmap((int)rect.X, (int)rect.Y, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
                 //todo set pixelformat
                 Graphics o = Graphics.FromImage(outBmp);
                 o.Clear(System.Drawing.Color.White);
-                o.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
+                o.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
                 o.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                o.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                o.PixelOffsetMode = PixelOffsetMode.None;
                 //System.Windows.MessageBox.Show("" + AvailableASCIIString[i]);
                 o.DrawString(AvailableASCIIString[i].ToString(), myFont, System.Drawing.Brushes.Black, 0, 0);
                 outBmp.Save("./outbmp.bmp");
                 // Determine shade
                 float white = 0;
                 float nonWhite = 0;
-                for(int x = 0; x < (int)Math.Ceiling(rect.X); x++)
+                for(int x = (int)rect.X - 1; x > -1; x--)
                 {
-                    for(int y = 0; y < (int)Math.Ceiling(rect.Y); y++)
+                    for(int y = (int)rect.Y - 1; y > -1; y--)
                     {
                         System.Drawing.Color pxColor = outBmp.GetPixel(x, y);
                         
@@ -259,8 +273,13 @@ namespace EE356P1mfr
                 {
                     ASCIIChars.Add(shade, AvailableASCIIString[i]);
                     retDict.Add(shade, outBmp);
+                    AvailableShades.Add(shade);
                 }
+
+                
                 g.Dispose();
+                o.Dispose();
+                bmp.Dispose();
                 outBmp.Dispose();
             }
 

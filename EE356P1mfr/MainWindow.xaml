@@ -35,16 +35,25 @@
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>
+                <ComboBox x:Name="cmboFontSize" Width="50" SelectionChanged="cmboFontSize_SelectionChanged" Height="20">
+                    <ComboBoxItem Content="12"></ComboBoxItem>
+                    <ComboBoxItem Content="14" IsSelected="True"></ComboBoxItem>
+                    <ComboBoxItem Content="18"></ComboBoxItem>
+                    <ComboBoxItem Content="24"></ComboBoxItem>
+                    <ComboBoxItem Content="28"></ComboBoxItem>
+                    <ComboBoxItem Content="36"></ComboBoxItem>
+                </ComboBox>
                 <MenuItem Header="Color" Name="mnuColorstatus" Background="#FFC3F7AE" Click="mnuOptionsToggle_Click"/>
             </Menu>
 
         </DockPanel>
         <Rectangle Name="rectGeneration" HorizontalAlignment="Left" Height="356" Margin="31,34,0,0" Stroke="Black" VerticalAlignment="Top" Width="394" Visibility="Hidden"/>
         <Button x:Name="btnImgLoad" Content="Load new image" HorizontalAlignment="Left" Margin="502,34,0,0" VerticalAlignment="Top" Width="250" Height="29" FontSize="18px" Click="btnImgLoad_Click"/>
-        <Button x:Name="btnGenerate" Content="Generate ASCII art" HorizontalAlignment="Left" Margin="502,118,0,0" VerticalAlignment="Top" Width="250" Height="29" FontSize="18px" Click="btnGenerate_Click"/>
-        <Button x:Name="btnSave" Content="Save ASCII art" HorizontalAlignment="Left" Margin="502,207,0,0" VerticalAlignment="Top" Width="250" Height="29" FontSize="18px" Click="btnSave_Click"/>
+        <Button x:Name="btnGenerate" Content="Generate ASCII art" HorizontalAlignment="Left" Margin="502,68,0,0" VerticalAlignment="Top" Width="250" Height="29" FontSize="18px" Click="btnGenerate_Click"/>
+        <Button x:Name="btnSave" Content="Save ASCII art" HorizontalAlignment="Left" Margin="502,102,0,0" VerticalAlignment="Top" Width="250" Height="29" FontSize="18px" Click="btnSave_Click"/>
         <Border BorderThickness="0" HorizontalAlignment="Stretch" Height="25" Margin="0,400,0,0" VerticalAlignment="Bottom" Background="#FF909EF2">
             <Label x:Name="lblFooterStatus" Content="Status: Ready." Foreground="White" VerticalAlignment="Bottom" Margin="0,0,0,-5"/>
         </Border>
+        <Button x:Name="btnConvert" Content="Convert to grayscale" HorizontalAlignment="Left" Margin="502,136,0,0" VerticalAlignment="Top" Width="250" Height="29" RenderTransformOrigin="0.393,1.525" FontSize="18px" Click="btnConvert_Click"/>
     </Grid>
 </Window>
