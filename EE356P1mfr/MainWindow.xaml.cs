@@ -32,6 +32,7 @@ namespace EE356P1mfr
     /// </summary>
     public partial class MainWindow : Window
     {
+        private bool ComponentsInitialized;
         public ICollection<System.Windows.Media.FontFamily> FixedWidthFonts { get; set; }
         public Dictionary<int, System.Windows.Media.FontFamily> FontIndexer { get; set; }
         private Dictionary<int, System.Drawing.FontFamily> FormsFontIndexer { get; set; }
@@ -42,6 +43,7 @@ namespace EE356P1mfr
         private bool ColorOutput;
         public MainWindow()
         {
+            this.ComponentsInitialized = false;
             // Fill out font list with monospaced fonts available from
             // System.Drawing.  I believe this will be all installed TrueType fixed-width fonts
             this.FixedWidthFonts = EnumerateFixedWidthFonts();
@@ -49,7 +51,7 @@ namespace EE356P1mfr
             // Fill out ASCII enumerators
             this.AvailableASCIIString = "`1234567890-=~!@#$%^&*()_+qwertyuiop[]\\QWERTYUIOP{}|asdfghjkl;'ASDFGHJKL:\"zxcvbnm,./ZXCVBNM<>?█";
             InitializeComponent();
-
+            this.ComponentsInitialized = true;
             // Initialize color buttons/status menu items
             this.ColorOutput = false;
             this.mnuOptionsToggle_Click(null, null);
@@ -59,6 +61,8 @@ namespace EE356P1mfr
             // handles dates/commit authors/etc.  !!! This was labeled as the `Sysfunc probe'
             // during commit/push on 8/23/2018.  -rienzo
 
+
+            lblFooterStatus.Content = "Status: Ready.";
         }
 
 
@@ -120,7 +124,13 @@ namespace EE356P1mfr
 
         private void cmboFonts_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (!ComponentsInitialized)
+            {
+                return;
+            }
 
+            this.ASCIIShades = this.CalculateFontShades();
+            lblFooterStatus.Content = "Status: Ready.";
         }
         
         // EnumerateFixedWidthFonts() -- Function's function should be pretty self explanatory
@@ -184,7 +194,8 @@ namespace EE356P1mfr
 
             if(MonoSpaceFonts == null)
             {
-                System.Windows.MessageBox.Show("Application Error: There are no fixed width fonts! (Error 0xEE)");
+                // Err 0xEF for "Empty Fonts"
+                System.Windows.MessageBox.Show("Application Error: There are no fixed width fonts! (Error 0xEF)");
                 System.Windows.Application.Current.Shutdown(0xee);
             }
             return MonoSpaceFonts;
@@ -194,7 +205,7 @@ namespace EE356P1mfr
         {
             lblFooterStatus.Content = "Status: Calculating font shaders...";
 
-            int imgArea = 0;
+            float imgArea = 0;
             Dictionary<float, Bitmap> retDict = new Dictionary<float, Bitmap>();
             int fontIndex = cmboFonts.SelectedIndex;
             this.ASCIIChars = new Dictionary<float, char>();
@@ -205,31 +216,31 @@ namespace EE356P1mfr
                 Graphics g = Graphics.FromImage(bmp);
 
                 Font myFont = new Font(FormsFontIndexer[fontIndex], 14, GraphicsUnit.Pixel);
-                SizeF size = g.MeasureString(""+AvailableASCIIString[i], myFont);
+                SizeF size = g.MeasureString(AvailableASCIIString[i].ToString(), myFont);
                 PointF rect = new PointF(size.Width, size.Height);
 
-                System.Windows.MessageBox.Show("X:"+ (int)Math.Ceiling(rect.X)+"\nY:"+(int)Math.Ceiling(rect.Y)+"\nfX"+rect.X+"\nfY:"+rect.Y);
+                //System.Windows.MessageBox.Show("X:"+ (int)Math.Ceiling(rect.X)+"\nY:"+(int)Math.Ceiling(rect.Y)+"\nfX"+rect.X+"\nfY:"+rect.Y);
                 Bitmap outBmp = new Bitmap((int)Math.Ceiling(rect.X), (int)Math.Ceiling(rect.Y), System.Drawing.Imaging.PixelFormat.Format24bppRgb);
                 //todo set pixelformat
-                //Graphics o = Graphics.FromImage(outBmp);
-                g.FillRectangle(System.Drawing.Brushes.White, 0, 0, rect.X, rect.Y);
-
-                g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
-                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                g.PixelOffsetMode = PixelOffsetMode.HighQuality;
-                g.DrawString("" + AvailableASCIIString[i], myFont, new SolidBrush(System.Drawing.Color.White), rect);
-
-                //outBmp.Save("./outbmp.bmp");
-                bmp.Save("./bmp.bmp");
+                Graphics o = Graphics.FromImage(outBmp);
+                o.Clear(System.Drawing.Color.White);
+                o.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
+                o.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                o.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                //System.Windows.MessageBox.Show("" + AvailableASCIIString[i]);
+                o.DrawString(AvailableASCIIString[i].ToString(), myFont, System.Drawing.Brushes.Black, 0, 0);
+                outBmp.Save("./outbmp.bmp");
                 // Determine shade
-                int white = 0;
-                int nonWhite = 0;
-                for(int x = 0; x < bmp.Width; x++)
+                float white = 0;
+                float nonWhite = 0;
+                for(int x = 0; x < (int)Math.Ceiling(rect.X); x++)
                 {
-                    for(int y = 0; y < bmp.Height; y++)
+                    for(int y = 0; y < (int)Math.Ceiling(rect.Y); y++)
                     {
                         System.Drawing.Color pxColor = outBmp.GetPixel(x, y);
-                        if(pxColor == System.Drawing.Color.White)
+                        
+                        if(pxColor.Name == "ffffffff") // I'm not sure why GetPixel returns this "name" instead of "White"
+                            // It took me forever to figure out what I was doing wrong...turns out nothing at all! Bug.
                         {
                             white++;
                         }
@@ -241,10 +252,14 @@ namespace EE356P1mfr
                 }
 
                 // Calculate our shade float
-                imgArea = outBmp.Width * outBmp.Height;
-                float shade = (float)white / (float)imgArea;
-                ASCIIChars.Add(shade, AvailableASCIIString[i]);
-                retDict.Add(shade, outBmp);
+                imgArea = rect.X * rect.Y;
+                float shade = white / imgArea;
+                // Check if any letter has the same shade (if so, skip)
+                if (!ASCIIChars.ContainsKey(shade))
+                {
+                    ASCIIChars.Add(shade, AvailableASCIIString[i]);
+                    retDict.Add(shade, outBmp);
+                }
                 g.Dispose();
                 outBmp.Dispose();
             }
