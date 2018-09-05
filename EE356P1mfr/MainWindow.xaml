@@ -23,9 +23,9 @@
                     <MenuItem Header="Color ouput is ON" Name="mnuItmColorOutputMode" IsEnabled="False" Background="#FFD6DA81"/>
                 </MenuItem>
                 <MenuItem Header="_Help">
-                    <MenuItem Header="Display help (_?)" Click="mnuHelpDisplay_Click"/>
+                    <!-- <MenuItem Header="Display help (_?)" Click="mnuHelpDisplay_Click"/> -->
                     <MenuItem Header="_About" Click="mnuHelpAbout_Click"/>
-                    <!--                    <MenuItem Header="Easter egg" Click="Menu_Help_Easter_Egg" Opacity="0.14"/> -->
+                    <!-- <MenuItem Header="Easter egg" Click="Menu_Help_Easter_Egg" Opacity="0.14"/> -->
                 </MenuItem>
                 <MenuItem Header="Font:" IsEnabled="False"/>
                 <ComboBox x:Name="cmboFonts" Width="158" SelectionChanged="cmboFonts_SelectionChanged" ItemsSource="{Binding Path=FixedWidthFonts}" Height="20" SelectedIndex="0">
@@ -55,5 +55,7 @@
             <Label x:Name="lblFooterStatus" Content="Status: Ready." Foreground="White" VerticalAlignment="Bottom" Margin="0,0,0,-5"/>
         </Border>
         <Button x:Name="btnConvert" Content="Convert to grayscale" HorizontalAlignment="Left" Margin="502,136,0,0" VerticalAlignment="Top" Width="250" Height="29" RenderTransformOrigin="0.393,1.525" FontSize="18px" Click="btnConvert_Click"/>
+        <Image x:Name="imgInput" HorizontalAlignment="Left" Height="356" Margin="31,34,0,0" VerticalAlignment="Top" Width="394" Visibility="Hidden"/>
+        <Image x:Name="imgASCII" HorizontalAlignment="Left" Height="356" Margin="31,34,0,0" VerticalAlignment="Top" Width="394" Visibility="Hidden"/>
     </Grid>
 </Window>
