@@ -61,6 +61,8 @@ namespace EE356P1mfr
         private int R = 0;
         private int G = 1;
         private int B = 2;
+        private int fontWidth;
+        private int fontHeight;
 
         public MainWindow()
         {
@@ -492,6 +494,107 @@ namespace EE356P1mfr
             SetWindowStatus(Ready);
         }
         
+        private void ProfileTheFont(System.Drawing.FontFamily fin)
+        {
+            Bitmap bmp = new Bitmap(100, 100);
+            // Draw block on white bitmap, and use a bytemask to find the width and height
+            // ...unsafe code with the bytemask is faster than the sytem libraries
+            Graphics g = Graphics.FromImage(bmp);
+
+            Font myFont = new Font(fin, SelectedFontSize, GraphicsUnit.Pixel);
+            g.Clear(System.Drawing.Color.White);
+            g.DrawString("█", myFont, System.Drawing.Brushes.Black, 0, 0);
+
+            BitmapData srcData = bmp.LockBits(
+            new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height),
+            ImageLockMode.ReadOnly,
+            System.Drawing.Imaging.PixelFormat.Format24bppRgb);
+
+            int stride = srcData.Stride;
+
+            IntPtr Scan0 = srcData.Scan0;
+            
+            int width = bmp.Width;
+            int height = bmp.Height;
+            int fontX = 0;
+            int fontY = 0;
+            bool lastPxBlack = false;
+            bool stillDoingX = true;
+            bool stillDoingY = true;
+            int firstBlackPx = 0;
+            unsafe
+            {
+                byte* p = (byte*)(void*)Scan0;
+
+                for (int y = 0; (y < height) && (stillDoingY); y++)
+                {
+                    for (int x = 0; (x < width) && (stillDoingX); x++)
+                    {
+                        string colorString = "0x";
+                        for (int color = 0; color < 3; color++)
+                        {
+                            // y*stride = y byte offset, x = x byte offset, + color is which of the three bytes
+                            int idx = (y * stride) + x * 3 + color;
+
+                            colorString += idx.ToString();
+                        }
+
+                        if(colorString != "0xffffff")
+                        {
+                            if(firstBlackPx == 0)
+                            {
+                                firstBlackPx = x;
+                            }
+                            lastPxBlack = true;
+                            fontX++;
+                        }
+                        else
+                        {
+                            if (lastPxBlack)
+                            {
+                                // We're done with X
+                                stillDoingX = false;
+                            }
+                        }
+                    }
+
+                    // Reset lastPxBlack
+                    if (!stillDoingX)
+                    {
+                        lastPxBlack = false;
+                    }
+
+                    // Find the next non-black pixel in the y direction at X
+                    string colorString = "0x";
+                    for(int color = 0; color < 3; color++)
+                    {
+                        int idx = (y * stride) + firstBlackPx * 3 + color;
+
+                        colorString += idx.ToString();
+                    }
+
+                    if(colorString != "0xffffff")
+                    {
+                        lastPxBlack = true;
+                        fontY++;
+
+                    }
+                    else
+                    {
+                        if (lastPxBlack)
+                        {
+                            stillDoingY = false;
+                        }
+                    }
+                 
+                }
+            }
+
+            // Now set fontWidth and Height
+            this.fontWidth = fontX;
+            this.fontHeight = fontY;
+        }
+
         // EnumerateFixedWidthFonts() -- Function's function should be pretty self explanatory
         // Takes no arguments, but returns an ICollection of font families
         //      Works by measuring the length of `WiOo' against `....'.  If the length
@@ -528,6 +631,8 @@ namespace EE356P1mfr
 //                            this.FixedWidthFontsEnumerated.Add(new System.Windows.Media.FontFamily(ff.Name));
                             this.FontIndexer.Add(index, fo);
                             this.FormsFontIndexer.Add(index, ff);
+
+                            ProfileTheFont(ff);
                         }
                         catch(Exception e)
                         {
